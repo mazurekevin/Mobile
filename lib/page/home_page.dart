@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/page/post_page.dart';
 import 'package:mobile/service/service_post.dart';
 
 import '../models/posts.dart';
@@ -50,8 +51,8 @@ class HomePage extends StatefulWidget {
           child: ListView.builder(
             itemCount: posts?.length,
             itemBuilder: (context, index) {
-              return Container(
-                padding: const EdgeInsets.all(16),
+              return InkWell(
+                borderRadius: BorderRadius.circular(40.0),
                 child: Row(
                   children: [
                     Container(
@@ -86,8 +87,18 @@ class HomePage extends StatefulWidget {
                     ),
                   ],
                 ),
+                onTap: (){
+                  Navigator.push(context,
+                      MaterialPageRoute<void>(
+                          builder:(BuildContext context) {
+                            return PostPage(post:posts![index]);
+                          }));
+                },
+
               );
+
             },
+
           ),
         ),
       );

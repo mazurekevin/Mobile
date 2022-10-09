@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/current_user.dart';
+import 'package:mobile/models/login.dart';
+import 'package:mobile/page/regi_page.dart';
 
 
+import '../service/service_user.dart';
 import '../widgets/btn_widget.dart';
 import '../widgets/herder_container.dart';
 import 'home_page.dart';
@@ -11,6 +15,23 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final pseudoController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  Login login = Login(username: "", password: "");
+  CurrentUser? response;
+
+  void _setText()async {
+    setState(() {
+      login.username = pseudoController.text;
+      login.password = passwordController.text;
+    });
+    response = await ServiceUser().login(login);
+    //print(response?.username);
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: Container(
@@ -25,8 +46,8 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  _textInput(hint: "Email", icon: Icons.email),
-                  _textInput(hint: "Password", icon: Icons.vpn_key),
+                  _textInput(controller:pseudoController ,hint: "Pseudo", icon: Icons.person),
+                  _textInput(controller:passwordController ,hint: "Password", icon: Icons.vpn_key),
                   Container(
                     margin: EdgeInsets.only(top: 10),
                     alignment: Alignment.centerRight,
@@ -38,10 +59,11 @@ class _LoginPageState extends State<LoginPage> {
                     child: Center(
                       child: ButtonWidget(
                         onClick: () {
-                          Navigator.push(
+                          _setText();
+                          /*Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomePage()));
+                                  builder: (context) => RegPage()));*/
                         },
                         btnText: "LOGIN",
                       ),

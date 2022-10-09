@@ -1,15 +1,50 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:mobile/models/register.dart';
+
+import '../service/service_user.dart';
 import '../widgets/btn_widget.dart';
 import '../widgets/herder_container.dart';
+import 'package:http/http.dart' as http;
 
 class RegPage extends StatefulWidget {
   @override
   _RegPageState createState() => _RegPageState();
 }
 
+
 class _RegPageState extends State<RegPage> {
-  @override
+  final pseudoController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  Register register = Register(username: '', email: '', password: '');
+
+  void _setText() {
+    setState(() {
+      register.username = pseudoController.text;
+      register.email = emailController.text;
+      register.password = passwordController.text;
+    });
+    var response = ServiceUser().createUser(register);
+
+  }
+
+
+  /*void createUser(Register register) async{
+    var client = http.Client();
+    var uri = Uri.parse('http://192.168.1.81:8081/api/auth/signup');
+
+    var response = await client.post(uri,body: register);
+
+  }*/
+
+
+
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -24,15 +59,17 @@ class _RegPageState extends State<RegPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    _textInput(hint: "Pseudo", icon: Icons.person),
-                    _textInput(hint: "Email", icon: Icons.email),
-                    _textInput(hint: "Password", icon: Icons.vpn_key),
+                    _textInput(controller:pseudoController ,hint: "Pseudo", icon: Icons.person),
+                    _textInput(controller:emailController,hint: "Email", icon: Icons.email),
+                    _textInput(controller:passwordController,hint: "Password", icon: Icons.vpn_key),
                     Expanded(
                       child: Center(
                         child: ButtonWidget(
                           btnText: "REGISTER",
                           onClick: (){
-                            Navigator.pop(context);
+                            _setText();
+                            //print("object");
+                            //Navigator.pop(context);
                           },
                         ),
                       ),
