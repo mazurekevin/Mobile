@@ -9,9 +9,9 @@ import '../models/login.dart';
 import '../models/register.dart';
 
 class ServiceUser{
-  Future<Response> createUser(Register register) async {
+  Future<int> createUser(Register register) async {
     final response = await http.post(
-      Uri.parse('http://192.168.1.81:8081/api/auth/signup'),
+      Uri.parse('http://localhost:8080/api/auth/signup'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -21,13 +21,17 @@ class ServiceUser{
         'password': register.password
       }),
     );
-
-    return response;
+    print(response.statusCode);
+    if(response.statusCode==200){
+      return response.statusCode;
+    }else{
+      return response.statusCode;
+    }
   }
 
   Future<CurrentUser?> login(Login login) async {
     var response = await http.post(
-      Uri.parse('http://192.168.1.81:8081/api/auth/signin'),
+      Uri.parse('http://localhost:8080/api/auth/signin'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

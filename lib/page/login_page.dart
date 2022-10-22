@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/current_user.dart';
 import 'package:mobile/models/login.dart';
+import 'package:mobile/page/nav_page.dart';
 import 'package:mobile/page/regi_page.dart';
+import 'package:mobile/utils/globale.dart' as g;
 
 
 import '../service/service_user.dart';
@@ -27,7 +29,16 @@ class _LoginPageState extends State<LoginPage> {
       login.password = passwordController.text;
     });
     response = await ServiceUser().login(login);
-    //print(response?.username);
+    g.username = response?.username;
+    if(response?.username==login.username){
+      Navigator.push(context,
+          MaterialPageRoute<void>(
+              builder:(BuildContext context) {
+                return NavePage(title: "title");
+              }));
+    }else{
+      print("erreur");
+    }
 
   }
 

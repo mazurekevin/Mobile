@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:mobile/models/register.dart';
+import 'package:mobile/page/login_page.dart';
 
 import '../service/service_user.dart';
 import '../widgets/btn_widget.dart';
@@ -23,24 +24,26 @@ class _RegPageState extends State<RegPage> {
 
   Register register = Register(username: '', email: '', password: '');
 
-  void _setText() {
+  Future<void> _setText() async {
     setState(() {
       register.username = pseudoController.text;
       register.email = emailController.text;
       register.password = passwordController.text;
     });
-    var response = ServiceUser().createUser(register);
+    var response = await ServiceUser().createUser(register);
+    if(response == 200){
+      Navigator.push(context,
+          MaterialPageRoute<void>(
+              builder:(BuildContext context) {
+                return LoginPage();
+              }));
+    }else{
+      print("erreur");
+    }
+
+
 
   }
-
-
-  /*void createUser(Register register) async{
-    var client = http.Client();
-    var uri = Uri.parse('http://192.168.1.81:8081/api/auth/signup');
-
-    var response = await client.post(uri,body: register);
-
-  }*/
 
 
 
@@ -49,6 +52,7 @@ class _RegPageState extends State<RegPage> {
     return Scaffold(
       body: Container(
         padding: EdgeInsets.only(bottom: 30),
+
         child: Column(
           children: <Widget>[
             HeaderContainer("Register"),

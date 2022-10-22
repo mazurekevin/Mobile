@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/page/regi_page.dart';
 
 import 'home_page.dart';
 import 'login_page.dart';
@@ -35,7 +36,9 @@ class _SplashPageState extends State<SplashPage> {
           ),
         ),
         child: Center(
-          child: Image.asset(""),
+          child: Image.asset(
+            '/logo.png',
+          ),
         ),
       ),
     );

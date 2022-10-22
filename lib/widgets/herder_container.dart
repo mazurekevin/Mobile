@@ -9,7 +9,7 @@ class HeaderContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.4,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           gradient: LinearGradient(
               colors: [Colors.blue,Colors.blueAccent],
               end: Alignment.bottomCenter,
@@ -25,7 +25,9 @@ class HeaderContainer extends StatelessWidget {
                 style: TextStyle(color: Colors.white,fontSize: 20),
               )),
           Center(
-            child: Image.asset("assets/logo.png"),
+            child: Image.asset(
+              '/logo.png',
+            ),
           ),
         ],
       ),

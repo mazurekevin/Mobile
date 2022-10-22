@@ -1,11 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mobile/models/posts.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobile/models/save_post.dart';
 
 class ServicePost{
   Future<List<Post>?> getPosts() async{
     var client = http.Client();
-    var uri = Uri.parse('http://192.168.1.81:8081/api/posts');
+    var uri = Uri.parse('http://localhost:8080/api/posts');
 
     var response = await client.get(uri);
     if(response.statusCode==200){
@@ -14,4 +17,44 @@ class ServicePost{
     }
     return null;
   }
+
+  Future<int?> deletePost(Post post) async{
+    var client = http.Client();
+    var uri = Uri.parse('http://localhost:8080/api/posts/${post.id}');
+
+    var response = await client.delete(uri);
+    if(response.statusCode==200){
+      return response.statusCode;
+    }
+    return null;
+  }
+
+  Future<int?> savePost(Post post) async{
+
+    final response = await http.post(
+      Uri.parse('http://localhost:8080/api/SavePosts'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'myPseudo': "Kmazure",
+        'name': post.name,
+        'caption': post.caption,
+        'code': post.code,
+        'language': post.language,
+        'likes': post.likeCount.toString(),
+        'originId': post.originId,
+        'originName': post.originName
+      }),
+    );
+
+    print(response.statusCode);
+    if(response.statusCode==201){
+      return response.statusCode;
+    }else{
+      return response.statusCode;
+    }
+
+  }
+
 }
