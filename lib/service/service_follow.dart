@@ -1,3 +1,78 @@
-class Follow{
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:mobile/models/follow.dart';
 
+class ServiceFollow {
+
+
+  Future<int?> createFollow(Follow follow) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:8080/api/follow'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'followerUserName': follow.followerUserName,
+        'followedUserName': follow.followedUserName,
+      }),
+    );
+
+
+    if (response.statusCode == 201) {
+      return response.statusCode;
+    } else {
+      return response.statusCode;
+    }
+  }
+
+  Future<int?> deleteFollow(Follow follow) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:8080/api/follow/deleteFollow'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'followerUserName': follow.followerUserName,
+        'followedUserName': follow.followedUserName,
+      }),
+    );
+
+
+    if (response.statusCode == 200) {
+      return response.statusCode;
+    } else {
+      return response.statusCode;
+    }
+  }
+
+  Future<bool?> checkFollow(Follow follow) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:8080/api/follow/checkFollow'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'followerUserName': follow.followerUserName,
+        'followedUserName': follow.followedUserName,
+      }),
+    );
+
+
+    if (response.body == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  Future<List<Follow>?> getFollowsByName(String? username) async{
+    var client = http.Client();
+    var uri = Uri.parse('http://localhost:8080/api/follow/follower/${username}');
+
+    var response = await client.get(uri);
+    if(response.statusCode==200){
+      var json = response.body;
+      return ListFollowFromJson(json);
+    }
+    return null;
+  }
 }

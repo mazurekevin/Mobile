@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-List<Register> userFromJson(String str) => List<Register>.from(json.decode(str).map((x) => Register.fromJson(x)));
+List<Register> registerFromJson(String str) => List<Register>.from(json.decode(str).map((x) => Register.fromJson(x)));
 
-String userToJson(List<Register> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String registerToJson(List<Register> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Register {
   Register({

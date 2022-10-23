@@ -234,6 +234,7 @@ class PostPage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: Transform.translate(
+
         offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
         child: Container(
           height: 100.0,
@@ -249,7 +250,7 @@ class PostPage extends StatelessWidget {
                 blurRadius: 6.0,
               ),
             ],
-            color: Colors.white,
+            color: Colors.blueAccent,
           ),
           child: Padding(
             padding: EdgeInsets.all(12.0),
@@ -265,23 +266,7 @@ class PostPage extends StatelessWidget {
                   borderSide: BorderSide(color: Colors.grey),
                 ),
                 contentPadding: EdgeInsets.all(20.0),
-                hintText: 'Add a comment',
-                prefixIcon: Container(
-                  margin: EdgeInsets.all(4.0),
-                  width: 48.0,
-                  height: 48.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black45,
-                        offset: Offset(0, 2),
-                        blurRadius: 6.0,
-                      ),
-                    ],
-                  ),
-                ),
-
+                hintText: '  Add a comment  ',
               ),
             ),
           ),

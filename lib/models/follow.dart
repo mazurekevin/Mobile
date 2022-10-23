@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 Follow followFromJson(String str) => Follow.fromJson(json.decode(str));
+List<Follow> ListFollowFromJson(String str) => List<Follow>.from(json.decode(str).map((x) => Follow.fromJson(x)));
 
 String followToJson(Follow data) => json.encode(data.toJson());
 

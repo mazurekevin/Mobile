@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/models/follow.dart';
 import 'package:mobile/page/post_page.dart';
-
+import 'package:mobile/service/service_follow.dart';
+import 'package:mobile/service/service_user.dart';
+import 'package:mobile/utils/globale.dart' as g;
 import '../models/posts.dart';
+import '../models/user.dart';
 import '../service/service_post.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -14,6 +18,9 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   List<Post>? posts;
+  User? user;
+  List<Follow>? follow;
+  var isLoaded = false;
   //var isLoaded = false;
 
   @override
@@ -21,11 +28,27 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
 
     //fetch data from API
-    getData();
+    getPostByName();
+    getUser();
+    getFollow();
   }
 
-  getData() async {
-    posts = await ServicePost().getPosts();
+  getFollow() async{
+    follow = await ServiceFollow().getFollowsByName(g.username);
+  }
+
+  getPostByName() async {
+    posts = await ServicePost().getPostsByName(g.username);
+
+  }
+
+  getUser() async {
+    user = await ServiceUser().getUserByName(g.username);
+    if (user != null) {
+      setState(() {
+        isLoaded = true;
+      });
+    }
 
   }
   @override
@@ -49,15 +72,14 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
-          body: SingleChildScrollView(
+          body: Visibility(
+            visible: isLoaded,
+            child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 73),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  ),
                   const SizedBox(
                     height: 20,
                   ),
@@ -98,9 +120,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                     const SizedBox(
                                       height: 80,
                                     ),
-                                    const Text(
-                                      'Jhone Doe',
-                                      style: TextStyle(
+                                     Text(
+                                      user?.username ?? '',
+                                      style: const TextStyle(
                                         color: Color.fromRGBO(39, 105, 171, 1),
                                         fontFamily: 'Nunito',
                                         fontSize: 37,
@@ -123,9 +145,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 fontSize: 25,
                                               ),
                                             ),
-                                            const Text(
-                                              '10',
-                                              style: TextStyle(
+                                            Text(
+                                              follow?.length.toString() ?? '0',
+                                              style: const TextStyle(
                                                 color: Color.fromRGBO(
                                                     39, 105, 171, 1),
                                                 fontFamily: 'Nunito',
@@ -152,16 +174,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                         Column(
                                           children: [
                                             Text(
-                                              'Save Post',
+                                              'Post',
                                               style: TextStyle(
                                                 color: Colors.grey[700],
                                                 fontFamily: 'Nunito',
                                                 fontSize: 25,
                                               ),
                                             ),
-                                            const Text(
-                                              '1',
-                                              style: TextStyle(
+                                            Text(
+                                              posts?.length.toString() ?? '0' ,
+                                              style: const TextStyle(
                                                 color: Color.fromRGBO(
                                                     39, 105, 171, 1),
                                                 fontFamily: 'Nunito',
@@ -170,30 +192,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                             ),
                                           ],
                                         ),
-                                        IconButton(
+                                        /*IconButton(
                                           icon: Icon(Icons.person_add),
                                           iconSize: 30.0,
                                           onPressed: () {
                                             print("follow");
                                           },
-                                        ),
+                                        ),*/
                                       ],
-
-                                    )
+                                    ),
                                   ],
-                                ),
-                              ),
-                            ),
-
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              right: 0,
-                              child: Center(
-                                child: Container(
-                                  child: Image.asset(
-                                        '/logo.png',
-                                  ),
                                 ),
                               ),
                             ),
@@ -268,7 +276,8 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
-        )
+        ),
+        ),
       ],
     );
   }

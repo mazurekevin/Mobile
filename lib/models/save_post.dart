@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 SavePost savePostFromJson(String str) => SavePost.fromJson(json.decode(str));
+List<SavePost> listSavePostFromJson(String str) => List<SavePost>.from(json.decode(str).map((x) => SavePost.fromJson(x)));
 
 String savePostToJson(SavePost data) => json.encode(data.toJson());
 
