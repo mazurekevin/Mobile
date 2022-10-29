@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/page/home_page.dart';
 import 'package:mobile/page/profile_page.dart';
+import 'package:mobile/utils/globale.dart' as g;
 
 class NavePage extends StatefulWidget {
   NavePage({Key? key, required this.title}) : super(key: key);
@@ -16,7 +17,7 @@ class _HomeState extends State<NavePage> {
   int _currentIndex = 0;
   final List<Widget> _screens = [
     const HomePage(),
-    const ProfilePage(),
+    ProfilePage(g.username),
   ];
 
   String get title => widget.title;

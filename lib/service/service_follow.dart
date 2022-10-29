@@ -1,22 +1,22 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mobile/models/follow.dart';
+import 'package:mobile/utils/globale.dart' as g;
 
 class ServiceFollow {
 
 
-  Future<int?> createFollow(Follow follow) async {
+  Future<int?> createFollow(String? followedUserName) async {
     final response = await http.post(
       Uri.parse('http://localhost:8080/api/follow'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
-        'followerUserName': follow.followerUserName,
-        'followedUserName': follow.followedUserName,
+      body: jsonEncode(<String, String?>{
+        'followerUserName': g.username,
+        'followedUserName': followedUserName,
       }),
     );
-
 
     if (response.statusCode == 201) {
       return response.statusCode;
@@ -25,15 +25,15 @@ class ServiceFollow {
     }
   }
 
-  Future<int?> deleteFollow(Follow follow) async {
+  Future<int?> deleteFollow(String? followedUserName) async {
     final response = await http.post(
       Uri.parse('http://localhost:8080/api/follow/deleteFollow'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
-        'followerUserName': follow.followerUserName,
-        'followedUserName': follow.followedUserName,
+      body: jsonEncode(<String, String?>{
+        'followerUserName': g.username,
+        'followedUserName': followedUserName,
       }),
     );
 
@@ -45,20 +45,21 @@ class ServiceFollow {
     }
   }
 
-  Future<bool?> checkFollow(Follow follow) async {
+  Future<bool?> checkFollow(String? followedUserName) async {
     final response = await http.post(
       Uri.parse('http://localhost:8080/api/follow/checkFollow'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
-        'followerUserName': follow.followerUserName,
-        'followedUserName': follow.followedUserName,
+      body: jsonEncode(<String, String?>{
+        'followerUserName': g.username,
+        'followedUserName': followedUserName,
       }),
     );
 
+    print(response.body);
+    if (response.body == "true") {
 
-    if (response.body == true) {
       return true;
     } else {
       return false;

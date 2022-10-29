@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/models/current_user.dart';
 import 'package:mobile/models/login.dart';
@@ -80,16 +81,29 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  RichText(
-                    text: const TextSpan(children: [
-                      TextSpan(
-                          text: "Don't have an account ? ",
-                          style: TextStyle(color: Colors.black)),
-                      TextSpan(
+                  InkWell(
+                    child:RichText(
+                      text: const TextSpan(children: [
+                        TextSpan(
+                            text: "Don't have an account ? ",
+                            style: TextStyle(color: Colors.black)),
+                        TextSpan(
                           text: "Registor",
-                          style: TextStyle(color: Colors.blue)),
-                    ]),
-                  )
+                          style: TextStyle(color: Colors.blue),
+                        ),
+
+                      ]),
+
+                    ) ,
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute<void>(
+                              builder:(BuildContext context) {
+                                return RegPage();
+                              }));
+                    },
+                  ),
+
                 ],
               ),
             ),

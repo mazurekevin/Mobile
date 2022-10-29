@@ -1,7 +1,11 @@
+import 'dart:html';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/models/follow.dart';
+import 'package:mobile/page/post.dart';
 import 'package:mobile/page/post_page.dart';
+import 'package:mobile/page/save_post_page.dart';
 import 'package:mobile/service/service_follow.dart';
 import 'package:mobile/service/service_user.dart';
 import 'package:mobile/utils/globale.dart' as g;
@@ -10,47 +14,59 @@ import '../models/user.dart';
 import '../service/service_post.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
-
+  const ProfilePage(this.username);
+  final String? username;
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<ProfilePage> createState() => _ProfilePageState(this.username);
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  String? username;
+  _ProfilePageState(this.username);
+
   List<Post>? posts;
   User? user;
   List<Follow>? follow;
   var isLoaded = false;
+  var check = false;
   //var isLoaded = false;
+  var endCheck = false;
+  var endUser = false;
+  var endFollow = false;
+  var endPost = false;
 
   @override
   void initState() {
     super.initState();
 
     //fetch data from API
-    getPostByName();
-    getUser();
-    getFollow();
+    Requete();
   }
 
-  getFollow() async{
-    follow = await ServiceFollow().getFollowsByName(g.username);
-  }
 
-  getPostByName() async {
-    posts = await ServicePost().getPostsByName(g.username);
 
-  }
-
-  getUser() async {
-    user = await ServiceUser().getUserByName(g.username);
-    if (user != null) {
+  Requete() async{
+    follow = await ServiceFollow().getFollowsByName(this.username);
+    posts = await ServicePost().getPostsByName(this.username);
+    user = await ServiceUser().getUserByName(this.username);
+    check = (await ServiceFollow().checkFollow(username))!;
+    if (follow != null && posts != null && user != null && check != null ) {
       setState(() {
         isLoaded = true;
       });
     }
+  }
+
+
+  deleteFollow(String? username) async {
+    int? response = await ServiceFollow().deleteFollow(username);
+  }
+
+  addFollow(String? username) async{
+    int? response = await ServiceFollow().createFollow(username);
 
   }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -80,18 +96,6 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 73),
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text(
-                    'My\nProfile',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 34,
-                      fontFamily: 'Nisebuschgardens',
-                    ),
-                  ),
                   const SizedBox(
                     height: 22,
                   ),
@@ -192,13 +196,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                             ),
                                           ],
                                         ),
-                                        /*IconButton(
-                                          icon: Icon(Icons.person_add),
+                                          IconButton(
+                                          icon: user?.username == g.username ?
+                                          Icon(Icons.bookmark): check == false ?
+                                          Icon(Icons.person_add) : Icon(Icons.person_remove),
                                           iconSize: 30.0,
                                           onPressed: () {
-                                            print("follow");
+                                            user?.username == g.username ?
+                                            Navigator.push(context,
+                                                MaterialPageRoute<void>(builder: (BuildContext context) {
+                                                  return SavePostPage(user?.username);
+                                                })):check == false ?
+                                             addFollow(user?.username): deleteFollow(user?.username);
                                           },
-                                        ),*/
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -264,7 +275,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               Navigator.push(context,
                                   MaterialPageRoute<void>(
                                       builder: (BuildContext context) {
-                                        return PostPage(post: posts![index]);
+                                        return PostDetails(posts![index]);
                                       }));
                             },
 

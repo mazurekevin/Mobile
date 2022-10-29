@@ -78,16 +78,26 @@ class _RegPageState extends State<RegPage> {
                         ),
                       ),
                     ),
-                    RichText(
-                      text: TextSpan(children: [
-                        TextSpan(
-                            text: "Already a member ? ",
-                            style: TextStyle(color: Colors.black)),
-                        TextSpan(
-                            text: "Login",
-                            style: TextStyle(color: Colors.blue)),
-                      ]),
-                    )
+                    InkWell(
+                      child:RichText(
+                        text: const TextSpan(children: [
+                          TextSpan(
+                              text: "Already a member ? ",
+                              style: TextStyle(color: Colors.black)),
+                          TextSpan(
+                              text: "Login",
+                              style: TextStyle(color: Colors.blue)),
+                        ]),
+                      ) ,
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute<void>(
+                                builder:(BuildContext context) {
+                                  return LoginPage();
+                                }));
+                      },
+                    ),
+
                   ],
                 ),
               ),

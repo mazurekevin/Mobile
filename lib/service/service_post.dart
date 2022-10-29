@@ -56,7 +56,7 @@ class ServicePost{
 
   Future<List<SavePost>?> getSavePostsByName(String username) async{
     var client = http.Client();
-    var uri = Uri.parse('http://localhost:8080/api/posts/user/${username}');
+    var uri = Uri.parse('http://localhost:8080/api/SavePosts/user/${username}');
 
     var response = await client.get(uri);
     if(response.statusCode==200){

@@ -1,84 +1,42 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/models/posts.dart';
-import 'package:mobile/page/home_page.dart';
-import 'package:mobile/page/origin_post.dart';
 import 'package:mobile/page/profile_page.dart';
 import 'package:mobile/service/service_post.dart';
 import 'package:mobile/utils/globale.dart' as g;
-import 'package:mobile/widgets/btn_widget.dart';
-
+import '../models/posts.dart';
 import 'nav_page.dart';
 
-class PostDetails extends StatefulWidget {
-  const PostDetails(this.post);
-
-  final Post post;
-
+class OriginPostPage extends StatefulWidget {
+  const OriginPostPage(this.id);
+  final int id;
   @override
-  State<PostDetails> createState() => _PostDetailsState(this.post);
+  State<OriginPostPage> createState() => _OriginPostPageState(this.id);
 }
 
-class _PostDetailsState extends State<PostDetails> {
-  Post post;
-  Post? post2;
-
-  _PostDetailsState(this.post);
-
+class _OriginPostPageState extends State<OriginPostPage> {
+  int id;
+  _OriginPostPageState(this.id);
   var isLoaded = false;
-
-  final messageController = TextEditingController();
-
+  Post? post;
   @override
   void initState() {
     super.initState();
 
+    //fetch data from API
+    getPost();
   }
-
-  //late List<Comment>  comments;
-  /*@override
-  void initState() {
-    super.initState();
-    getComments();
-  }
-  getComments() async {
-    comments = post.comments;
-    if (comments != null) {
+  getPost() async{
+    post = await ServicePost().getPostById(id);
+    if(post!=null){
       setState(() {
         isLoaded = true;
       });
     }
-  }*/
-
-  getPost(int id) async{
-    post2 = (await ServicePost().getPostById(id))!;
-    if(post2!=null){
-      Navigator.push(context,
-          MaterialPageRoute<void>(
-              builder:(BuildContext context) {
-                return PostDetails(post2!);
-              }));
-    }else{
-      print("erreur");
-    }
   }
-
-  Future<void> sendMessage(int id, String body) async {
-    var response = await ServicePost().addComment(id, body);
-    if (response == 201) {
-      post.comments.add(new Comment(id: post.comments.length + 1, username: g.username.toString(), body: body));
-    } else {
-      print("erreur");
-    }
-  }
-
-
   Future<void> deletePost() async {
-    var response = await ServicePost().deletePost(post);
+    var response = await ServicePost().deletePost(post!);
     if (response == 200) {
+      print("delete");
       Navigator.push(context,
           MaterialPageRoute<void>(
               builder:(BuildContext context) {
@@ -90,19 +48,22 @@ class _PostDetailsState extends State<PostDetails> {
   }
 
   Future<void> SavePost() async {
-    var response = await ServicePost().savePost(post);
+    var response = await ServicePost().savePost(post!);
     if (response == 201) {
       print("create");
     } else {
       print("erreur");
     }
   }
-
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
+    return Scaffold(
+      body: Visibility(
+        visible: isLoaded,
+        replacement: const Center(
+          child: CircularProgressIndicator(),
+        ),
+        child:  Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
@@ -117,7 +78,7 @@ class _PostDetailsState extends State<PostDetails> {
                               Container(
                                 margin: EdgeInsets.all(10),
                                 child: IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.arrow_back_outlined,
                                     size: 30,
                                   ),
@@ -127,7 +88,7 @@ class _PostDetailsState extends State<PostDetails> {
                                 ),
                               ),
                               Text(
-                                post.name,
+                                post!.name,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 30),
                               ),
@@ -136,7 +97,7 @@ class _PostDetailsState extends State<PostDetails> {
                           Container(
                             margin: EdgeInsets.all(10),
                             child: Text(
-                              post.language,
+                              post!.language,
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 30),
                             ),
@@ -147,7 +108,7 @@ class _PostDetailsState extends State<PostDetails> {
                         children: [
                           Container(
                             child: Text(
-                              post.caption,
+                              post!.caption,
                               style: TextStyle(fontSize: 15),
                             ),
 
@@ -156,19 +117,17 @@ class _PostDetailsState extends State<PostDetails> {
                             icon: Icon(Icons.bookmark),
                             iconSize: 30.0, onPressed: () { SavePost(); },
                           ),
-                          post.name == g.username ?
+                          post!.name == g.username ?
                           IconButton(
-                            icon: 
+                            icon:
                             Icon(Icons.delete),
                             iconSize: 30.0, onPressed: () {deletePost(); },
-                          ):const Text(""),
-                          post.originId != null ?
+                          ):Text(""),
+                          post!.originId != null ?
                           IconButton(icon: Icon(Icons.keyboard_return),
                             iconSize: 30.0,
-                            onPressed: () {
-                            getPost(post.originId);
-                            },
-                          ):const Text(""),
+                            onPressed: () {  },
+                          ):Text(""),
                         ],
                       ),
 
@@ -180,7 +139,7 @@ class _PostDetailsState extends State<PostDetails> {
                         child: Container(
                           margin: EdgeInsets.all(10),
                           child: Text(
-                            post.code,
+                            post!.code,
                             style: const TextStyle(
                               color: Colors.white,
                             ),
@@ -197,24 +156,24 @@ class _PostDetailsState extends State<PostDetails> {
                         child: ListView(
                           shrinkWrap: true,
                           children: [
-                            for (var comment in post.comments)
+                            for (var comment in post!.comments)
                               InkWell(
                                 child: Card(
                                   color: Colors.grey[100],
                                   child: Container(
                                     child: Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
                                         Row(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                               children: [
                                                 Container(
                                                   child: TextButton(
@@ -230,7 +189,7 @@ class _PostDetailsState extends State<PostDetails> {
                                                       comment.username,
                                                       style: TextStyle(
                                                           color:
-                                                              Colors.blue[900]),
+                                                          Colors.blue[900]),
                                                     ),
                                                   ),
                                                 ),
@@ -260,73 +219,7 @@ class _PostDetailsState extends State<PostDetails> {
 
           ],
         ),
-        bottomNavigationBar: Transform.translate(
-          offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
-          child: Container(
-            height: 100.0,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30.0),
-                topRight: Radius.circular(30.0),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  offset: Offset(0, -2),
-                  blurRadius: 6.0,
-                ),
-              ],
-              color: Colors.black54,
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(12.0),
-              child: TextField(
-                controller: messageController,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  contentPadding: EdgeInsets.all(20.0),
-                  hintText: 'Add a comment',
-                  prefixIcon: Container(
-                    margin: EdgeInsets.all(4.0),
-                    width: 48.0,
-                    height: 48.0,
-                  ),
-                  suffixIcon: Container(
-                    margin: EdgeInsets.only(right: 4.0),
-                    width: 70.0,
-                    child: IconButton(
-                      icon: Icon(Icons.send),
-                      iconSize: 30.0,
-                      onPressed: () {setState(() {
-
-                      });
-                        sendMessage(post.id, messageController.text);
-                        messageController.clear();
-                      Navigator.push(context,
-                          MaterialPageRoute<void>(builder: (BuildContext context) {
-                            return PostDetails(post);
-                          }));
-                        },
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-
-
       ),
-
     );
-
   }
 }

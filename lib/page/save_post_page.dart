@@ -1,22 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/models/save_post.dart';
 import 'package:mobile/page/post.dart';
-import 'package:mobile/page/post_page.dart';
-import 'package:mobile/service/service_post.dart';
+import 'package:mobile/page/save_post_details.dart';
 
-import '../models/posts.dart';
-import '../models/user.dart';
+import '../service/service_post.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class SavePostPage extends StatefulWidget {
+  const SavePostPage(this.username);
+  final String? username;
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<SavePostPage> createState() => _SavePostPageState(this.username);
 }
 
-class _HomePageState extends State<HomePage> {
-  List<Post>? posts;
-  late Post post;
+class _SavePostPageState extends State<SavePostPage> {
+  String? username;
+  _SavePostPageState(this.username);
+  List<SavePost>? savePosts;
   var isLoaded = false;
 
   @override
@@ -28,24 +29,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   getData() async {
-    posts = await ServicePost().getPosts();
-    if (posts != null) {
+    savePosts = await ServicePost().getSavePostsByName(username!);
+    if (savePosts != null) {
       setState(() {
         isLoaded = true;
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        //leading: Icon(Icons.arrow_back),
+          title: const Text('My Save Post'),
+      ),
       body: Visibility(
         visible: isLoaded,
         replacement: const Center(
           child: CircularProgressIndicator(),
         ),
         child: ListView.builder(
-          itemCount: posts?.length,
+          itemCount: savePosts?.length,
           itemBuilder: (context, index) {
             return InkWell(
               borderRadius: BorderRadius.circular(40.0),
@@ -67,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            posts![index].name,
+                            savePosts![index].name,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
@@ -76,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           Text(
-                            posts![index].caption,
+                            savePosts![index].caption ?? '',
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -92,7 +96,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: Center(
                         child: Text(
-                          posts![index].language,
+                          savePosts![index].language ?? '',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -103,8 +107,8 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute<void>(builder: (BuildContext context) {
-                  return PostDetails(posts![index]);
-                }));
+                      return SavePostDetails(savePosts![index]);
+                    }));
               },
             );
           },
